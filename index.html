@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My AI Studio</title> <!-- RENAMED -->
+    <title>My AI Studio</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="app-container">
         <aside class="left-sidebar">
-            <div class="logo" id="app-logo">My AI Studio</div> <!-- RENAMED & ID ADDED -->
+            <div class="logo" id="app-logo">My AI Studio</div>
             <nav>
                 <ul>
                     <li class="active" id="nav-chat"><span class="icon">💬</span> Chat</li>
-                    <li id="nav-stream"><span class="icon">📊</span> Stream</li>
-                    <li id="nav-video-gen" class="nav-disabled"><span class="icon">🎬</span> Video Gen</li>
-                    <li id="nav-starter-apps"><span class="icon">⭐</span> Starter Apps</li>
+                    <li id="nav-stream"><span class="icon">🌊</span> Stream <small>(Chat)</small></li>
+                    <li id="nav-stt"><span class="icon">🎤</span> Speech-to-Text</li>
+                    <li id="nav-tts"><span class="icon">🗣️</span> Text-to-Speech</li>
                     <li id="nav-history"><span class="icon">📜</span> History</li>
                 </ul>
             </nav>
-            <div class="sidebar-footer" id="app-footer-text">
-                Powered by Groq. For experimentation and learning.
-            </div> <!-- UPDATED TEXT & ID ADDED -->
+            <!-- Footer removed -->
         </aside>
 
         <main class="main-content">
@@ -29,19 +27,14 @@
                  <h2>Chat Prompt</h2>
                 <div class="main-header-actions">
                     <button class="icon-btn" id="new-chat-btn" title="New Chat">📄</button>
-                    <button class="icon-btn" title="View Code (coming soon)" disabled></></button>
-                    <button class="icon-btn" title="Share (coming soon)" disabled>🔗</button>
-                    <button class="icon-btn" title="Save Chat (coming soon)" disabled>💾</button>
-                    <button class="icon-btn" title="Undo (N/A)" disabled>↪️</button>
-                    <button class="icon-btn" title="Redo (N/A)" disabled>🔄</button>
-                    <button class="icon-btn" title="More Options (coming soon)" disabled>⋮</button>
+                    <!-- Other buttons removed -->
                 </div>
             </header>
 
             <div class="chat-interface">
                 <div id="chat-output">
                     <div class="welcome-message">
-                        <h1 id="welcome-header">Welcome to My AI Studio</h1> <!-- RENAMED & ID ADDED -->
+                        <h1 id="welcome-header">Welcome to My AI Studio</h1>
                     </div>
                 </div>
                 <div class="system-prompt-container">
@@ -53,9 +46,9 @@
                     <button class="suggestion-btn">Create a scavenger hunt.</button>
                 </div>
                 <div class="prompt-input-area">
-                    <button class="attach-btn" title="Attach file (N/A for current models)" disabled>+</button>
-                    <textarea id="prompt-input" placeholder="User prompt: e.g., Write a short story about a curious cat."></textarea>
-                    <button id="run-button">Run <span class="shortcut">Ctrl+↵</span></button>
+                    <!-- Attach button removed -->
+                    <textarea id="prompt-input" placeholder="User prompt... (Press Enter to send)"></textarea>
+                    <button id="run-button">Run <span class="shortcut">↵</span></button>
                 </div>
             </div>
         </main>
@@ -65,7 +58,7 @@
                 <h3>Run settings</h3>
                 <div class="actions">
                     <button class="icon-btn-sm" id="reset-settings-btn" title="Reset Settings">🔄</button>
-                    <button class="icon-btn-sm" title="Close Settings (N/A)" disabled>✕</button>
+                    <!-- Close button removed -->
                 </div>
             </div>
             <div class="settings-section">
@@ -88,40 +81,24 @@
             <div class="settings-section tools-section">
                 <h4>Tools <span class="toggle-arrow">^</span></h4>
                 <div class="tool-item">
-                    <span>Structured output</span>
-                    <button class="edit-btn" disabled>Edit</button>
+                    <span>Structured output <small>(Future)</small></span>
+                    <!-- Edit button removed -->
                     <label class="switch">
                         <input type="checkbox" id="tool-structured-output">
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div class="tool-item tool-disabled"> <!-- Visually disable -->
-                    <span>Code execution <small>(N/A)</small></span>
-                    <label class="switch">
-                        <input type="checkbox" disabled>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
                 <div class="tool-item">
-                    <span>Function calling</span>
-                     <button class="edit-btn" disabled>Edit</button>
+                    <span>Function calling <small>(Future)</small></span>
+                     <!-- Edit button removed -->
                     <label class="switch">
                         <input type="checkbox" id="tool-function-calling">
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div class="tool-item tool-disabled"> <!-- Visually disable -->
-                    <span>Grounding with Google <small>(N/A)</small></span>
-                    <label class="switch">
-                        <input type="checkbox" disabled>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
+                <!-- Code execution and Grounding removed -->
             </div>
-            <div class="settings-section advanced-settings">
-                <h4>Advanced settings <span class="toggle-arrow">⌄</span></h4>
-                <!-- Content for advanced settings can be added here -->
-            </div>
+            <!-- Advanced settings section removed -->
         </aside>
     </div>
     <script src="/static/script.js"></script>

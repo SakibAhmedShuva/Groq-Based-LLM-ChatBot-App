@@ -1,12 +1,13 @@
 import os
-from flask import Flask, request, jsonify, send_from_directory
+import json # For SSE data formatting
+from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 from groq import Groq
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder=None) # No separate static folder, all in HTML
 CORS(app)
 
 try:
@@ -20,48 +21,71 @@ except Exception as e:
 
 @app.route('/')
 def serve_index():
+    # Serve the single index.html file
     return send_from_directory('.', 'index.html')
 
-@app.route('/chat', methods=['POST'])
-def chat_with_groq():
+def generate_groq_stream(payload):
+    """
+    Generator function to stream responses from Groq.
+    Sends data in Server-Sent Events format.
+    """
     if not client:
-        return jsonify({"error": "Groq client not initialized. Check API key and server logs."}), 500
+        error_event = {"error": "Groq client not initialized."}
+        yield f"data: {json.dumps(error_event)}\n\n"
+        return
 
-    data = request.json
-    user_prompt = data.get('prompt')
-    system_prompt_from_request = data.get('system_prompt')
-    temperature_from_request = data.get('temperature', 0.7)
-    model_id_from_request = data.get('model_id', 'llama3-8b-8192') # <<< ADDED: Get model_id, default if not provided
+    user_prompt = payload.get('prompt')
+    system_prompt_from_request = payload.get('system_prompt')
+    temperature_from_request = payload.get('temperature', 0.7)
+    model_id_from_request = payload.get('model_id', 'llama3-8b-8192')
 
     if not user_prompt:
-        return jsonify({"error": "Prompt is required"}), 400
+        error_event = {"error": "Prompt is required"}
+        yield f"data: {json.dumps(error_event)}\n\n"
+        return
 
     final_system_prompt = system_prompt_from_request if system_prompt_from_request and system_prompt_from_request.strip() else "You are a helpful AI assistant."
+    
+    full_response_content = ""
 
     try:
-        print(f"Received user prompt: {user_prompt}")
-        print(f"Using system prompt: {final_system_prompt}")
-        print(f"Using temperature: {temperature_from_request}")
-        print(f"Using model: {model_id_from_request}") # <<< Log the model being used
-
+        print(f"Streaming request for model: {model_id_from_request}")
         messages = [
             {"role": "system", "content": final_system_prompt},
             {"role": "user", "content": user_prompt}
         ]
-
-        chat_completion = client.chat.completions.create(
+        
+        stream = client.chat.completions.create(
             messages=messages,
-            model=model_id_from_request, # <<< UPDATED: Use the model_id from request
+            model=model_id_from_request,
             temperature=float(temperature_from_request),
-            max_tokens=1024, # Consider making this configurable later
+            max_tokens=2048, # Adjust as needed
+            stream=True,
         )
-        ai_response = chat_completion.choices[0].message.content
-        print(f"Groq response: {ai_response}")
-        return jsonify({"response": ai_response})
+
+        for chunk in stream:
+            content_chunk = chunk.choices[0].delta.content
+            if content_chunk:
+                full_response_content += content_chunk
+                # Send chunk to client
+                event_data = {"text_chunk": content_chunk, "is_final": False}
+                yield f"data: {json.dumps(event_data)}\n\n"
+        
+        # Send final event with full response (useful for history saving on client)
+        final_event_data = {"full_response": full_response_content, "is_final": True}
+        yield f"data: {json.dumps(final_event_data)}\n\n"
 
     except Exception as e:
-        print(f"Error calling Groq API: {e}")
-        return jsonify({"error": f"Error communicating with Groq API: {str(e)}"}), 500
+        print(f"Error during Groq stream: {e}")
+        error_event = {"error": f"Error streaming from Groq: {str(e)}", "is_final": True}
+        yield f"data: {json.dumps(error_event)}\n\n"
+
+
+@app.route('/chat', methods=['POST'])
+def chat_with_groq_stream():
+    payload = request.json
+    return Response(generate_groq_stream(payload), mimetype='text/event-stream')
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
