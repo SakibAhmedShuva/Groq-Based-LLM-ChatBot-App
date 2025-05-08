@@ -3,46 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Studio Clone</title>
-    <link rel="stylesheet" href="/static/style.css"> <!-- Or styles.css if you kept that name -->
+    <title>My AI Studio</title> <!-- RENAMED -->
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- ... (left-sidebar and main-content unchanged until right-sidebar) ... -->
         <aside class="left-sidebar">
-            <div class="logo">Google AI Studio</div>
+            <div class="logo" id="app-logo">My AI Studio</div> <!-- RENAMED & ID ADDED -->
             <nav>
                 <ul>
-                    <li class="active"><span class="icon">💬</span> Chat</li>
-                    <li><span class="icon">📊</span> Stream</li>
-                    <li><span class="icon">🎬</span> Video Gen</li>
-                    <li><span class="icon">⭐</span> Starter Apps</li>
-                    <li><span class="icon">📜</span> History</li>
+                    <li class="active" id="nav-chat"><span class="icon">💬</span> Chat</li>
+                    <li id="nav-stream"><span class="icon">📊</span> Stream</li>
+                    <li id="nav-video-gen" class="nav-disabled"><span class="icon">🎬</span> Video Gen</li>
+                    <li id="nav-starter-apps"><span class="icon">⭐</span> Starter Apps</li>
+                    <li id="nav-history"><span class="icon">📜</span> History</li>
                 </ul>
             </nav>
-            <div class="sidebar-footer">
-                This experimental model is for feedback and testing only. No production use.
-            </div>
+            <div class="sidebar-footer" id="app-footer-text">
+                Powered by Groq. For experimentation and learning.
+            </div> <!-- UPDATED TEXT & ID ADDED -->
         </aside>
 
         <main class="main-content">
             <header class="main-header">
                  <h2>Chat Prompt</h2>
                 <div class="main-header-actions">
-                    <button class="icon-btn">📄</button>
-                    <button class="icon-btn"></></button>
-                    <button class="icon-btn">🔗</button>
-                    <button class="icon-btn">💾</button>
-                    <button class="icon-btn">↪️</button>
-                    <button class="icon-btn">🔄</button>
-                    <button class="icon-btn">⋮</button>
+                    <button class="icon-btn" id="new-chat-btn" title="New Chat">📄</button>
+                    <button class="icon-btn" title="View Code (coming soon)" disabled></></button>
+                    <button class="icon-btn" title="Share (coming soon)" disabled>🔗</button>
+                    <button class="icon-btn" title="Save Chat (coming soon)" disabled>💾</button>
+                    <button class="icon-btn" title="Undo (N/A)" disabled>↪️</button>
+                    <button class="icon-btn" title="Redo (N/A)" disabled>🔄</button>
+                    <button class="icon-btn" title="More Options (coming soon)" disabled>⋮</button>
                 </div>
             </header>
 
             <div class="chat-interface">
                 <div id="chat-output">
                     <div class="welcome-message">
-                        <h1>Welcome to AI Studio</h1>
+                        <h1 id="welcome-header">Welcome to My AI Studio</h1> <!-- RENAMED & ID ADDED -->
                     </div>
                 </div>
                 <div class="system-prompt-container">
@@ -54,7 +53,7 @@
                     <button class="suggestion-btn">Create a scavenger hunt.</button>
                 </div>
                 <div class="prompt-input-area">
-                    <button class="attach-btn">+</button>
+                    <button class="attach-btn" title="Attach file (N/A for current models)" disabled>+</button>
                     <textarea id="prompt-input" placeholder="User prompt: e.g., Write a short story about a curious cat."></textarea>
                     <button id="run-button">Run <span class="shortcut">Ctrl+↵</span></button>
                 </div>
@@ -65,21 +64,20 @@
             <div class="right-sidebar-header">
                 <h3>Run settings</h3>
                 <div class="actions">
-                    <button class="icon-btn-sm">🔄</button>
-                    <button class="icon-btn-sm">✕</button>
+                    <button class="icon-btn-sm" id="reset-settings-btn" title="Reset Settings">🔄</button>
+                    <button class="icon-btn-sm" title="Close Settings (N/A)" disabled>✕</button>
                 </div>
             </div>
             <div class="settings-section">
                 <select id="model-select">
                     <!-- Options will be populated by JavaScript -->
                 </select>
-                <!-- NEW: Div to display model information -->
                 <div id="model-info" class="model-info-text">
                     <!-- Model rate limits will be displayed here -->
                 </div>
                 <div class="setting-item">
                     <span>Token count</span>
-                    <span id="token-count">0 / --</span> <!-- Updated placeholder -->
+                    <span id="token-count">0 / --</span>
                 </div>
                 <div class="setting-item">
                     <label for="temperature">Temperature</label>
@@ -87,42 +85,42 @@
                     <input type="number" id="temperature-value" value="0.7" min="0" max="1" step="0.1">
                 </div>
             </div>
-            <!-- ... (rest of tools-section and advanced-settings unchanged) ... -->
-             <div class="settings-section tools-section">
+            <div class="settings-section tools-section">
                 <h4>Tools <span class="toggle-arrow">^</span></h4>
                 <div class="tool-item">
                     <span>Structured output</span>
-                    <button class="edit-btn">Edit</button>
+                    <button class="edit-btn" disabled>Edit</button>
                     <label class="switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="tool-structured-output">
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div class="tool-item">
-                    <span>Code execution</span>
+                <div class="tool-item tool-disabled"> <!-- Visually disable -->
+                    <span>Code execution <small>(N/A)</small></span>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" disabled>
                         <span class="slider round"></span>
                     </label>
                 </div>
                 <div class="tool-item">
                     <span>Function calling</span>
-                     <button class="edit-btn">Edit</button>
+                     <button class="edit-btn" disabled>Edit</button>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" id="tool-function-calling">
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div class="tool-item">
-                    <span>Grounding with Google Search</span>
+                <div class="tool-item tool-disabled"> <!-- Visually disable -->
+                    <span>Grounding with Google <small>(N/A)</small></span>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" disabled>
                         <span class="slider round"></span>
                     </label>
                 </div>
             </div>
             <div class="settings-section advanced-settings">
                 <h4>Advanced settings <span class="toggle-arrow">⌄</span></h4>
+                <!-- Content for advanced settings can be added here -->
             </div>
         </aside>
     </div>

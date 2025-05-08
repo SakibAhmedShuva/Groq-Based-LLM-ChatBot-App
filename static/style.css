@@ -1,3 +1,5 @@
+/* static/style.css OR static/styles.css */
+
 body {
   font-family: 'Roboto', 'Noto Sans', sans-serif;
   margin: 0;
@@ -17,7 +19,7 @@ body {
 /* Left Sidebar */
 .left-sidebar {
   width: 240px;
-  background-color: #f1f3f4; /* Slightly lighter than Google's current */
+  background-color: #f1f3f4;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -27,7 +29,7 @@ body {
 .left-sidebar .logo {
   font-size: 1.4em;
   font-weight: 500;
-  color: #1a73e8; /* Google Blue */
+  color: #4285F4; /* Example: Groq-like blue, or your preferred color */
   margin-bottom: 24px;
   padding: 8px 0;
 }
@@ -41,7 +43,7 @@ body {
 .left-sidebar nav li {
   padding: 10px 12px;
   margin-bottom: 4px;
-  border-radius: 18px; /* Pill shape */
+  border-radius: 18px;
   cursor: pointer;
   font-size: 0.9em;
   display: flex;
@@ -49,7 +51,7 @@ body {
 }
 .left-sidebar nav li .icon {
   margin-right: 12px;
-  font-size: 1.2em; /* Make icons a bit larger */
+  font-size: 1.2em;
 }
 
 .left-sidebar nav li:hover {
@@ -57,9 +59,21 @@ body {
 }
 
 .left-sidebar nav li.active {
-  background-color: #d9e6fc; /* Lighter blue for active */
+  background-color: #d9e6fc;
   color: #1967d2;
   font-weight: 500;
+}
+
+/* Disabled Navigation items */
+.left-sidebar nav li.nav-disabled {
+  color: #9aa0a6; /* Grey out text */
+  cursor: not-allowed;
+}
+.left-sidebar nav li.nav-disabled:hover {
+  background-color: transparent; /* No hover effect */
+}
+.left-sidebar nav li.nav-disabled .icon {
+  opacity: 0.6;
 }
 
 .sidebar-footer {
@@ -76,7 +90,7 @@ body {
   flex-direction: column;
   background-color: #ffffff;
   padding: 0 24px;
-  overflow-y: auto; /* Allow main content to scroll if needed */
+  overflow-y: auto;
 }
 
 .main-header {
@@ -107,8 +121,16 @@ body {
   margin-left: 8px;
   border-radius: 50%;
 }
-.main-header-actions .icon-btn:hover {
+.main-header-actions .icon-btn:hover:not(:disabled) {
   background-color: #f1f3f4;
+}
+/* Disabled main header icon buttons */
+.main-header-actions .icon-btn:disabled {
+  color: #bdc1c6;
+  cursor: not-allowed;
+}
+.main-header-actions .icon-btn:disabled:hover {
+  background-color: transparent;
 }
 
 
@@ -116,8 +138,8 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Push input to bottom */
-  padding-bottom: 20px; /* Space for input area */
+  justify-content: flex-end;
+  padding-bottom: 20px;
 }
 
 #chat-output {
@@ -126,15 +148,21 @@ body {
   padding: 20px 0;
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px; /* Space above system prompt */
 }
 .welcome-message {
   text-align: center;
   margin: auto; /* Centers vertically and horizontally in flex container */
+  display: flex; /* Keep as flex to center content */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ensure it takes full available height if chat is empty */
 }
 .welcome-message h1 {
   font-size: 2.5em;
   font-weight: 400;
-  color: #1a73e8;
+  color: #1a73e8; /* Or your app's primary color */
 }
 
 .message {
@@ -143,15 +171,16 @@ body {
   margin-bottom: 10px;
   max-width: 70%;
   word-wrap: break-word;
+  line-height: 1.4;
 }
 .message.user {
-  background-color: #e8f0fe; /* Lighter blue for user */
+  background-color: #e8f0fe;
   color: #174ea6;
   align-self: flex-end;
   margin-left: auto;
 }
 .message.ai {
-  background-color: #f1f3f4; /* Light grey for AI */
+  background-color: #f1f3f4;
   color: #3c4043;
   align-self: flex-start;
   margin-right: auto;
@@ -167,12 +196,40 @@ body {
   align-self: flex-start;
 }
 
+.system-prompt-container {
+  margin: 0 auto 15px auto;
+  max-width: 800px;
+  width: 100%;
+}
+
+#system-prompt-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-size: 0.95em;
+  line-height: 1.4;
+  min-height: 50px;
+  max-height: 150px;
+  resize: vertical;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  font-family: inherit;
+}
+#system-prompt-input::placeholder {
+  color: #80868b;
+}
+#system-prompt-input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 1px #1a73e8;
+}
 
 .prompt-suggestions {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  flex-wrap: wrap; /* Allow suggestions to wrap */
+  flex-wrap: wrap;
   justify-content: center;
 }
 .suggestion-btn {
@@ -194,9 +251,9 @@ body {
   border: 1px solid #dadce0;
   border-radius: 24px;
   padding: 5px 10px;
-  background-color: #f1f3f4; /* Input area background */
-  margin: 0 auto; /* Center input area */
-  max-width: 800px; /* Max width for prompt area */
+  background-color: #f1f3f4;
+  margin: 0 auto;
+  max-width: 800px;
   width: 100%;
 }
 
@@ -209,9 +266,18 @@ body {
   padding: 8px;
   border-radius: 50%;
 }
-.attach-btn:hover{
+.attach-btn:hover:not(:disabled){
   background-color: #e0e0e0;
 }
+/* Disabled attach button */
+.prompt-input-area .attach-btn:disabled {
+  color: #bdc1c6;
+  cursor: not-allowed;
+}
+.prompt-input-area .attach-btn:disabled:hover {
+  background-color: transparent;
+}
+
 
 #prompt-input {
   flex-grow: 1;
@@ -219,12 +285,16 @@ body {
   outline: none;
   padding: 10px;
   font-size: 1em;
-  resize: none; /* Disable textarea resize handle */
+  resize: none;
   background-color: transparent;
-  min-height: 24px; /* Min height for one line */
-  max-height: 200px; /* Max height before scroll */
+  min-height: 24px;
+  max-height: 200px;
   overflow-y: auto;
 }
+#prompt-input::placeholder {
+  color: #80868b;
+}
+
 
 #run-button {
   background-color: #1a73e8;
@@ -242,7 +312,7 @@ body {
   opacity: 0.8;
   margin-left: 5px;
 }
-#run-button:hover {
+#run-button:hover:not(:disabled) {
   background-color: #1765cc;
 }
 #run-button:disabled {
@@ -253,7 +323,7 @@ body {
 /* Right Sidebar */
 .right-sidebar {
   width: 300px;
-  background-color: #f8f9fa; /* Slightly different from left, or same */
+  background-color: #f8f9fa;
   padding: 16px;
   border-left: 1px solid #dadce0;
   overflow-y: auto;
@@ -277,10 +347,18 @@ body {
   cursor: pointer;
   padding: 6px;
 }
-.icon-btn-sm:hover {
+.icon-btn-sm:hover:not(:disabled) {
   background-color: #e8eaed;
   border-radius: 50%;
 }
+.icon-btn-sm:disabled {
+  color: #bdc1c6;
+  cursor: not-allowed;
+}
+.icon-btn-sm:disabled:hover {
+  background-color: transparent;
+}
+
 
 .settings-section {
   margin-bottom: 20px;
@@ -308,29 +386,27 @@ body {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #dadce0;
-  margin-bottom: 8px; /* Add some space before model info */
+  margin-bottom: 8px;
   background-color: white;
-  font-size: 0.9em; /* Match other inputs if needed */
+  font-size: 0.9em;
 }
 
-/* NEW Styles for Model Information Display */
 .model-info-text {
-  font-size: 0.75em; /* Smaller text */
-  color: #5f6368;    /* Greyish color */
-  padding: 8px 4px;  /* Some padding */
-  margin-bottom: 12px; /* Space before next item (token count) */
+  font-size: 0.75em;
+  color: #5f6368;
+  padding: 8px 4px;
+  margin-bottom: 12px;
   line-height: 1.4;
-  background-color: #f8f9fa; /* Very light background, optional */
+  background-color: #f8f9fa;
   border-radius: 4px;
-  border: 1px solid #e8eaed; /* Subtle border, optional */
+  border: 1px solid #e8eaed;
 }
 
-/* Adjust setting-item margin if needed */
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; /* Existing, ensure it looks good with new div */
+  margin-bottom: 10px;
 }
 .setting-item label {
   color: #5f6368;
@@ -367,15 +443,24 @@ body {
   font-size: 0.8em;
   margin-right: 10px;
 }
-.edit-btn:hover {
+.edit-btn:hover:not(:disabled) {
   background-color: #e8f0fe;
 }
+.edit-btn:disabled {
+  color: #9aa0a6;
+  border-color: #dadce0;
+  cursor: not-allowed;
+}
+.edit-btn:disabled:hover {
+  background-color: transparent;
+}
+
 
 /* Simple Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
-  width: 34px; /* Smaller switch */
+  width: 34px;
   height: 20px;
 }
 .switch input {
@@ -396,7 +481,7 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 16px; /* Smaller knob */
+  height: 16px;
   width: 16px;
   left: 2px;
   bottom: 2px;
@@ -410,7 +495,7 @@ input:focus + .slider {
   box-shadow: 0 0 1px #1a73e8;
 }
 input:checked + .slider:before {
-  transform: translateX(14px); /* Adjust for smaller size */
+  transform: translateX(14px);
 }
 .slider.round {
   border-radius: 20px;
@@ -418,50 +503,28 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-/* static/style.css */
-/* ... (all existing CSS from previous response) ... */
 
-/* NEW Styles for System Prompt */
-.system-prompt-container {
-  margin: 0 auto 15px auto; /* Center and add margin below */
-  max-width: 800px; /* Consistent width */
-  width: 100%;
+/* Disabled Tool items in right sidebar */
+.tool-item.tool-disabled {
+  color: #9aa0a6; /* Grey out text */
+  opacity: 0.7;
 }
-
-#system-prompt-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #dadce0;
-  border-radius: 8px;
-  font-size: 0.95em; /* Slightly smaller or same as main prompt */
-  line-height: 1.4;
-  min-height: 50px; /* Start with a bit more space */
-  max-height: 150px; /* Limit growth before scrolling */
-  resize: vertical; /* Allow user to resize vertically */
-  box-sizing: border-box;
-  background-color: #f8f9fa; /* A slightly different background */
-  font-family: inherit; /* Ensure it uses the body font */
+.tool-item.tool-disabled .edit-btn {
+  cursor: not-allowed;
+  color: #9aa0a6;
+  border-color: #dadce0;
 }
-
-#system-prompt-input::placeholder {
-  color: #80868b;
+.tool-item.tool-disabled .edit-btn:hover {
+  background-color: transparent;
 }
-
-#system-prompt-input:focus {
-  outline: none;
-  border-color: #1a73e8; /* Google Blue focus */
-  box-shadow: 0 0 0 1px #1a73e8;
+.tool-item.tool-disabled .switch input:disabled + .slider {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
-
-/* Adjust prompt input placeholder text to guide user */
-#prompt-input::placeholder {
-  color: #80868b;
+.tool-item.tool-disabled .switch input:disabled + .slider:before {
+  background-color: #e0e0e0; /* Lighter knob for disabled checked state */
 }
-
-/* Optional: Adjust spacing if chat output feels too close to system prompt */
-#chat-output {
-  /* ... existing styles ... */
-  margin-bottom: 10px; /* Add some space if system prompt is directly above */
+.tool-item small { /* For (N/A) text */
+  font-size: 0.8em;
+  margin-left: 4px;
 }
-
-/* ... (rest of existing CSS) ... */

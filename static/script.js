@@ -1,21 +1,45 @@
 // static/script.js
 document.addEventListener('DOMContentLoaded', () => {
+    // --- APP CONFIG ---
+    const APP_NAME = "My AI Studio"; // Configure your app name here
+    const DEFAULT_MODEL_ID = "llama3-8b-8192";
+    const DEFAULT_TEMPERATURE = 0.7;
+    const FOOTER_TEXT = "Powered by Groq. For experimentation and learning.";
+
+    // --- DOM Elements ---
+    const appLogo = document.getElementById('app-logo');
+    const welcomeHeader = document.getElementById('welcome-header');
+    const appFooterText = document.getElementById('app-footer-text');
+
     const promptInput = document.getElementById('prompt-input');
     const systemPromptInput = document.getElementById('system-prompt-input');
     const runButton = document.getElementById('run-button');
     const chatOutput = document.getElementById('chat-output');
     const temperatureSlider = document.getElementById('temperature');
     const temperatureValue = document.getElementById('temperature-value');
-    const suggestionButtons = document.querySelectorAll('.suggestion-btn');
-    const welcomeMessage = document.querySelector('.welcome-message');
-    const modelSelect = document.getElementById('model-select'); // Get model select dropdown
-    const modelInfoDiv = document.getElementById('model-info');   // Get model info display div
+    const modelSelect = document.getElementById('model-select');
+    const modelInfoDiv = document.getElementById('model-info');
+    const welcomeMessageContainer = document.querySelector('.welcome-message'); // Target the container
+
+    // Buttons
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const resetSettingsBtn = document.getElementById('reset-settings-btn');
+
+    // Tool Toggles
+    const toolStructuredOutputToggle = document.getElementById('tool-structured-output');
+    const toolFunctionCallingToggle = document.getElementById('tool-function-calling');
+
+    // Other Nav items (for placeholders)
+    const navStream = document.getElementById('nav-stream');
+    const navVideoGen = document.getElementById('nav-video-gen');
+    const navStarterApps = document.getElementById('nav-starter-apps');
+    const navHistory = document.getElementById('nav-history');
+
 
     const API_URL = '/chat';
 
     // --- MODEL DATA ---
-    const modelsData = [
-        // Chat Models (prioritize these for the dropdown)
+    const modelsData = [ /* ... (your existing modelsData array - no change here) ... */
         { id: "llama3-8b-8192", group: "Chat", name: "Llama 3 (8B)", rpm: 30, rpd: 14400, tpm: 6000, tpd: "500,000" },
         { id: "llama3-70b-8192", group: "Chat", name: "Llama 3 (70B)", rpm: 30, rpd: 14400, tpm: 6000, tpd: "500,000" },
         { id: "gemma2-9b-it", group: "Chat", name: "Gemma 2 (9B Instruct)", rpm: 30, rpd: 14400, tpm: 15000, tpd: "500,000" },
@@ -30,35 +54,46 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "meta-llama/llama-4-scout-17b-16e-instruct", group: "Chat", name: "Llama 4 Scout (17B Instruct)", rpm: 30, rpd: 1000, tpm: 30000, tpd: "(No limit)" },
         { id: "mistral-saba-24b", group: "Chat", name: "Mistral Saba (24B)", rpm: 30, rpd: 1000, tpm: 6000, tpd: "500,000" },
         { id: "qwen-qwq-32b", group: "Chat", name: "Qwen QWQ (32B)", rpm: 30, rpd: 1000, tpm: 6000, tpd: "(No limit)" },
-        // Speech To Text Models (Not for this primary chat dropdown but kept for completeness if needed elsewhere)
-        // { id: "distil-whisper-large-v3-en", group: "STT", name: "Distil Whisper Large v3 (EN)", rpm: 20, rpd: 2000, tpm: 7200, tpd: "28,800" },
-        // { id: "whisper-large-v3", group: "STT", name: "Whisper Large v3", rpm: 20, rpd: 2000, tpm: 7200, tpd: "28,800" },
-        // { id: "whisper-large-v3-turbo", group: "STT", name: "Whisper Large v3 Turbo", rpm: 20, rpd: 2000, tpm: 7200, tpd: "28,800" },
-        // Text To Speech Models
-        // { id: "playai-tts", group: "TTS", name: "PlayAI TTS", rpm: 10, rpd: 100, tpm: 1200, tpd: "3,600" },
-        // { id: "playai-tts-arabic", group: "TTS", name: "PlayAI TTS (Arabic)", rpm: 10, rpd: 100, tpm: 1200, tpd: "3,600" }
     ];
 
     const chatModels = modelsData.filter(model => model.group === "Chat");
-    let selectedModelId = chatModels.length > 0 ? chatModels[0].id : "llama3-8b-8192"; // Default to first chat model or a known good one
+    let selectedModelId = DEFAULT_MODEL_ID;
 
-    function populateModelDropdown() {
+    // Tool states
+    let toolStates = {
+        structuredOutput: false,
+        functionCalling: false
+    };
+
+    // --- Initialization ---
+    function initializeApp() {
+        if (appLogo) appLogo.textContent = APP_NAME;
+        if (welcomeHeader) welcomeHeader.innerHTML = `Welcome to ${APP_NAME}`; // Use innerHTML if APP_NAME can have simple HTML
+        if (appFooterText) appFooterText.textContent = FOOTER_TEXT;
+
+        populateModelDropdown();
+        resetSettings(); // Apply default settings on load
+        loadToolStates(); // Load tool states from localStorage
+        updateToolTogglesUI();
+    }
+
+    // --- UI Update Functions ---
+    function populateModelDropdown() { /* ... (no change from previous) ... */
         if (!modelSelect) return;
-        modelSelect.innerHTML = ''; // Clear existing options
+        modelSelect.innerHTML = '';
         chatModels.forEach(model => {
             const option = document.createElement('option');
             option.value = model.id;
-            option.textContent = model.name || model.id; // Use 'name' if available, else 'id'
+            option.textContent = model.name || model.id;
             modelSelect.appendChild(option);
         });
-        // Set default selection and trigger info update
         if (chatModels.length > 0) {
-            modelSelect.value = selectedModelId;
+            modelSelect.value = selectedModelId; // Will be set by resetSettings or loaded state
             updateModelInfo(selectedModelId);
         }
     }
 
-    function updateModelInfo(modelId) {
+    function updateModelInfo(modelId) { /* ... (no change from previous) ... */
         if (!modelInfoDiv) return;
         const model = modelsData.find(m => m.id === modelId);
         if (model) {
@@ -70,61 +105,120 @@ document.addEventListener('DOMContentLoaded', () => {
             modelInfoDiv.textContent = 'Model information not available.';
         }
     }
+    
+    function updateTemperatureUI(value) {
+        temperatureSlider.value = value;
+        temperatureValue.value = parseFloat(value).toFixed(1);
+    }
 
+    // --- Event Handlers ---
+    function handleNewChat() {
+        chatOutput.innerHTML = ''; // Clear previous messages
+        if (welcomeMessageContainer) { // Show welcome message again
+            welcomeMessageContainer.style.display = 'flex'; // Or 'block', 'grid' depending on its original display
+             // Re-create or unhide the h1 inside welcomeMessageContainer if it was removed
+            if (!welcomeHeader || !welcomeMessageContainer.contains(welcomeHeader)) {
+                const h1 = document.createElement('h1');
+                h1.id = 'welcome-header'; // Ensure it has the ID if recreated
+                h1.textContent = `Welcome to ${APP_NAME}`;
+                welcomeMessageContainer.appendChild(h1);
+            }
+        }
+        systemPromptInput.value = '';
+        systemPromptInput.style.height = 'auto'; // Reset height
+        promptInput.value = '';
+        promptInput.style.height = 'auto'; // Reset height
+        console.log("New chat started.");
+    }
+
+    function resetSettings() {
+        selectedModelId = DEFAULT_MODEL_ID;
+        if (modelSelect) {
+            modelSelect.value = selectedModelId;
+            updateModelInfo(selectedModelId);
+        }
+        updateTemperatureUI(DEFAULT_TEMPERATURE);
+        console.log("Settings reset to defaults.");
+    }
+
+    // Auto-resize textareas
+    [promptInput, systemPromptInput].forEach(textarea => { /* ... (no change from previous) ... */
+        if (textarea) {
+            textarea.addEventListener('input', () => {
+                textarea.style.height = 'auto';
+                textarea.style.height = (textarea.scrollHeight) + 'px';
+            });
+            // Initial resize
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+    });
+    
+    // Sync temperature slider and number input
+    temperatureSlider.addEventListener('input', (e) => updateTemperatureUI(e.target.value));
+    temperatureValue.addEventListener('input', (e) => {
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = DEFAULT_TEMPERATURE;
+        if (val < 0) val = 0; if (val > 1) val = 1;
+        updateTemperatureUI(val);
+    });
+
+    // Model select change
     if (modelSelect) {
         modelSelect.addEventListener('change', (event) => {
             selectedModelId = event.target.value;
             updateModelInfo(selectedModelId);
         });
     }
-    // --- END MODEL HANDLING ---
 
-    // Auto-resize textareas
-    [promptInput, systemPromptInput].forEach(textarea => {
-        // ... (auto-resize logic - no change) ...
-        if (textarea) {
-            textarea.addEventListener('input', () => {
-                textarea.style.height = 'auto';
-                textarea.style.height = (textarea.scrollHeight) + 'px';
-            });
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
+    // Tool Toggles
+    function saveToolStates() {
+        localStorage.setItem('toolStates', JSON.stringify(toolStates));
+    }
+    function loadToolStates() {
+        const saved = localStorage.getItem('toolStates');
+        if (saved) {
+            toolStates = JSON.parse(saved);
         }
-    });
-    
-    // Sync temperature slider
-    // ... (temperature logic - no change) ...
-    temperatureSlider.addEventListener('input', (e) => {
-        temperatureValue.value = e.target.value;
-    });
-    temperatureValue.addEventListener('input', (e) => {
-        let val = parseFloat(e.target.value);
-        if (isNaN(val)) val = 0.7;
-        if (val < 0) val = 0;
-        if (val > 1) val = 1;
-        temperatureSlider.value = val;
-        temperatureValue.value = val.toFixed(1);
-    });
+    }
+    function updateToolTogglesUI() {
+        if(toolStructuredOutputToggle) toolStructuredOutputToggle.checked = toolStates.structuredOutput;
+        if(toolFunctionCallingToggle) toolFunctionCallingToggle.checked = toolStates.functionCalling;
+    }
 
-    const addMessageToChat = (text, sender, type = 'text') => {
-        // ... (addMessageToChat logic - no change) ...
-        if (welcomeMessage && welcomeMessage.style.display !== 'none') {
-            welcomeMessage.style.display = 'none';
+    if(toolStructuredOutputToggle) {
+        toolStructuredOutputToggle.addEventListener('change', (e) => {
+            toolStates.structuredOutput = e.target.checked;
+            saveToolStates();
+            console.log("Structured Output:", toolStates.structuredOutput);
+        });
+    }
+    if(toolFunctionCallingToggle) {
+        toolFunctionCallingToggle.addEventListener('change', (e) => {
+            toolStates.functionCalling = e.target.checked;
+            saveToolStates();
+            console.log("Function Calling:", toolStates.functionCalling);
+            // Future: if enabled, you might show an "Edit Functions" modal or similar
+        });
+    }
+
+
+    // --- Chat Logic ---
+    const addMessageToChat = (text, sender, type = 'text') => { /* ... (no change from previous) ... */
+        if (welcomeMessageContainer && welcomeMessageContainer.style.display !== 'none') {
+            welcomeMessageContainer.style.display = 'none';
         }
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', sender);
-        if (type === 'error') {
-            messageDiv.classList.add('error');
-        } else if (type === 'loading') {
-            messageDiv.classList.add('loading');
-        }
+        if (type === 'error') messageDiv.classList.add('error');
+        else if (type === 'loading') messageDiv.classList.add('loading');
         messageDiv.textContent = text;
         chatOutput.appendChild(messageDiv);
         chatOutput.scrollTop = chatOutput.scrollHeight;
         return messageDiv;
     };
 
-    const handleRunPrompt = async () => {
+    const handleRunPrompt = async () => { /* ... (no change, model_id already included) ... */
         const userPromptText = promptInput.value.trim();
         const systemPromptText = systemPromptInput.value.trim();
         const currentTemperature = parseFloat(temperatureSlider.value);
@@ -138,34 +232,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loadingMessage = addMessageToChat('AI is thinking...', 'ai', 'loading');
 
+        // Include tool states in payload if they affect the backend call
+        // For now, we're just logging them. Function calling would need to send definitions.
         const payload = {
             prompt: userPromptText,
             system_prompt: systemPromptText,
             temperature: currentTemperature,
-            model_id: selectedModelId // <<< ADDED: Send selected model ID
+            model_id: selectedModelId,
+            // tools_config: toolStates // Example if backend needs this
         };
+        console.log("Sending payload:", payload);
+        console.log("Current tool states (FE only for now):", toolStates);
+
 
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-            // ... (rest of try-catch-finally - no change, except for model_id in payload) ...
+            // ... (rest of try-catch for fetch - no change)
             if (chatOutput.contains(loadingMessage)) {
                 chatOutput.removeChild(loadingMessage);
             }
-
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: "The server returned an error, but the error message could not be parsed." }));
+                const errorData = await response.json().catch(() => ({ error: "Server error, no details." }));
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-
             const data = await response.json();
             addMessageToChat(data.response, 'ai');
-
         } catch (error) {
             console.error('Error:', error);
             if (loadingMessage && chatOutput.contains(loadingMessage)) {
@@ -177,24 +272,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    runButton.addEventListener('click', handleRunPrompt);
+    // --- Event Listeners for Buttons ---
+    if (newChatBtn) newChatBtn.addEventListener('click', handleNewChat);
+    if (resetSettingsBtn) resetSettingsBtn.addEventListener('click', resetSettings);
+    if (runButton) runButton.addEventListener('click', handleRunPrompt);
+    
     promptInput.addEventListener('keydown', (event) => {
-        // ... (keydown logic - no change) ...
         if (event.key === 'Enter' && event.ctrlKey) {
             event.preventDefault();
             handleRunPrompt();
         }
     });
-    suggestionButtons.forEach(button => {
-        // ... (suggestion button logic - no change) ...
-        button.addEventListener('click', () => {
-            promptInput.value = button.textContent;
-            promptInput.focus();
-            promptInput.dispatchEvent(new Event('input', { bubbles: true }));
-        });
+
+    // Placeholder nav item clicks
+    [navStream, navVideoGen, navStarterApps, navHistory].forEach(navItem => {
+        if (navItem) {
+            navItem.addEventListener('click', (e) => {
+                if (navItem.classList.contains('nav-disabled')) {
+                    e.preventDefault();
+                    return;
+                }
+                alert(`"${navItem.textContent.trim()}" feature is coming soon!`);
+                // Could also remove 'active' from #nav-chat and add to clicked one
+                // document.querySelector('.left-sidebar nav li.active').classList.remove('active');
+                // navItem.classList.add('active');
+            });
+        }
     });
 
     // Initialize
-    populateModelDropdown(); // Populate dropdown on load
-
+    initializeApp();
 });
