@@ -308,15 +308,29 @@ body {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #dadce0;
-  margin-bottom: 12px;
+  margin-bottom: 8px; /* Add some space before model info */
   background-color: white;
+  font-size: 0.9em; /* Match other inputs if needed */
 }
 
+/* NEW Styles for Model Information Display */
+.model-info-text {
+  font-size: 0.75em; /* Smaller text */
+  color: #5f6368;    /* Greyish color */
+  padding: 8px 4px;  /* Some padding */
+  margin-bottom: 12px; /* Space before next item (token count) */
+  line-height: 1.4;
+  background-color: #f8f9fa; /* Very light background, optional */
+  border-radius: 4px;
+  border: 1px solid #e8eaed; /* Subtle border, optional */
+}
+
+/* Adjust setting-item margin if needed */
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Existing, ensure it looks good with new div */
 }
 .setting-item label {
   color: #5f6368;
