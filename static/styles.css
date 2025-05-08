@@ -404,3 +404,50 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+/* static/style.css */
+/* ... (all existing CSS from previous response) ... */
+
+/* NEW Styles for System Prompt */
+.system-prompt-container {
+  margin: 0 auto 15px auto; /* Center and add margin below */
+  max-width: 800px; /* Consistent width */
+  width: 100%;
+}
+
+#system-prompt-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-size: 0.95em; /* Slightly smaller or same as main prompt */
+  line-height: 1.4;
+  min-height: 50px; /* Start with a bit more space */
+  max-height: 150px; /* Limit growth before scrolling */
+  resize: vertical; /* Allow user to resize vertically */
+  box-sizing: border-box;
+  background-color: #f8f9fa; /* A slightly different background */
+  font-family: inherit; /* Ensure it uses the body font */
+}
+
+#system-prompt-input::placeholder {
+  color: #80868b;
+}
+
+#system-prompt-input:focus {
+  outline: none;
+  border-color: #1a73e8; /* Google Blue focus */
+  box-shadow: 0 0 0 1px #1a73e8;
+}
+
+/* Adjust prompt input placeholder text to guide user */
+#prompt-input::placeholder {
+  color: #80868b;
+}
+
+/* Optional: Adjust spacing if chat output feels too close to system prompt */
+#chat-output {
+  /* ... existing styles ... */
+  margin-bottom: 10px; /* Add some space if system prompt is directly above */
+}
+
+/* ... (rest of existing CSS) ... */

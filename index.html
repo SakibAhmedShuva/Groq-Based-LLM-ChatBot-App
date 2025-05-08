@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio Clone</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- UPDATED PATH for CSS -->
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="app-container">
         <aside class="left-sidebar">
+            <!-- ... (sidebar content unchanged) ... -->
             <div class="logo">Google AI Studio</div>
             <nav>
                 <ul>
@@ -26,7 +28,8 @@
 
         <main class="main-content">
             <header class="main-header">
-                <h2>Chat Prompt</h2>
+                <!-- ... (header content unchanged) ... -->
+                 <h2>Chat Prompt</h2>
                 <div class="main-header-actions">
                     <button class="icon-btn">📄</button>
                     <button class="icon-btn"></></button>
@@ -46,6 +49,11 @@
                     <!-- Chat messages will be appended here -->
                 </div>
 
+                <!-- NEW: System Prompt Input Area -->
+                <div class="system-prompt-container">
+                    <textarea id="system-prompt-input" placeholder="System Prompt (e.g., You are a poetic assistant that responds in rhyme.)"></textarea>
+                </div>
+
                 <div class="prompt-suggestions">
                     <button class="suggestion-btn">Solve geometry problems with an image.</button>
                     <button class="suggestion-btn">Find the next shape in a sequence.</button>
@@ -54,13 +62,14 @@
 
                 <div class="prompt-input-area">
                     <button class="attach-btn">+</button>
-                    <textarea id="prompt-input" placeholder="prepare a: ..."></textarea>
+                    <textarea id="prompt-input" placeholder="User prompt: e.g., Write a short story about a curious cat."></textarea>
                     <button id="run-button">Run <span class="shortcut">Ctrl+↵</span></button>
                 </div>
             </div>
         </main>
 
         <aside class="right-sidebar">
+            <!-- ... (right sidebar content unchanged, temperature slider is already there) ... -->
             <div class="right-sidebar-header">
                 <h3>Run settings</h3>
                 <div class="actions">
@@ -122,6 +131,7 @@
         </aside>
     </div>
 
-    <script src="script.js"></script>
+    <!-- UPDATED PATH for JS -->
+    <script src="/static/script.js"></script>
 </body>
 </html>
