@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio Clone</title>
-    <!-- UPDATED PATH for CSS -->
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css"> <!-- Or styles.css if you kept that name -->
 </head>
 <body>
     <div class="app-container">
+        <!-- ... (left-sidebar and main-content unchanged until right-sidebar) ... -->
         <aside class="left-sidebar">
-            <!-- ... (sidebar content unchanged) ... -->
             <div class="logo">Google AI Studio</div>
             <nav>
                 <ul>
@@ -28,7 +27,6 @@
 
         <main class="main-content">
             <header class="main-header">
-                <!-- ... (header content unchanged) ... -->
                  <h2>Chat Prompt</h2>
                 <div class="main-header-actions">
                     <button class="icon-btn">📄</button>
@@ -46,20 +44,15 @@
                     <div class="welcome-message">
                         <h1>Welcome to AI Studio</h1>
                     </div>
-                    <!-- Chat messages will be appended here -->
                 </div>
-
-                <!-- NEW: System Prompt Input Area -->
                 <div class="system-prompt-container">
                     <textarea id="system-prompt-input" placeholder="System Prompt (e.g., You are a poetic assistant that responds in rhyme.)"></textarea>
                 </div>
-
                 <div class="prompt-suggestions">
                     <button class="suggestion-btn">Solve geometry problems with an image.</button>
                     <button class="suggestion-btn">Find the next shape in a sequence.</button>
                     <button class="suggestion-btn">Create a scavenger hunt.</button>
                 </div>
-
                 <div class="prompt-input-area">
                     <button class="attach-btn">+</button>
                     <textarea id="prompt-input" placeholder="User prompt: e.g., Write a short story about a curious cat."></textarea>
@@ -69,7 +62,6 @@
         </main>
 
         <aside class="right-sidebar">
-            <!-- ... (right sidebar content unchanged, temperature slider is already there) ... -->
             <div class="right-sidebar-header">
                 <h3>Run settings</h3>
                 <div class="actions">
@@ -79,12 +71,15 @@
             </div>
             <div class="settings-section">
                 <select id="model-select">
-                    <option>Gemini 2.5 Pro Preview 05-06</option>
-                    <option>Llama 3 8B (Groq)</option>
+                    <!-- Options will be populated by JavaScript -->
                 </select>
+                <!-- NEW: Div to display model information -->
+                <div id="model-info" class="model-info-text">
+                    <!-- Model rate limits will be displayed here -->
+                </div>
                 <div class="setting-item">
                     <span>Token count</span>
-                    <span id="token-count">0 / 1,048,576</span>
+                    <span id="token-count">0 / --</span> <!-- Updated placeholder -->
                 </div>
                 <div class="setting-item">
                     <label for="temperature">Temperature</label>
@@ -92,7 +87,8 @@
                     <input type="number" id="temperature-value" value="0.7" min="0" max="1" step="0.1">
                 </div>
             </div>
-            <div class="settings-section tools-section">
+            <!-- ... (rest of tools-section and advanced-settings unchanged) ... -->
+             <div class="settings-section tools-section">
                 <h4>Tools <span class="toggle-arrow">^</span></h4>
                 <div class="tool-item">
                     <span>Structured output</span>
@@ -130,8 +126,6 @@
             </div>
         </aside>
     </div>
-
-    <!-- UPDATED PATH for JS -->
     <script src="/static/script.js"></script>
 </body>
 </html>
